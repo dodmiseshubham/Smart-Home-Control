@@ -1,41 +1,30 @@
-from fastapi import FastAPI
-import paho.mqtt.server as mqtt
+import ssl
+import sys
 
-app = FastAPI()
-mqtt_broker = mqtt.MQTTServer()
+import paho.mqtt.client
+import paho.mqtt.publish
 
-@app.on_event("startup")
-async def startup_event():
-    mqtt_broker.start()  # Start the MQTT broker
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    mqtt_broker.stop()  # Stop the MQTT broker
-
-# MQTT callback functions
 def on_connect(client, userdata, flags, rc):
-    print(f"Client {client} connected with result code {rc}")
+	print('connected')
 
-def on_message(client, userdata, msg):
-    print(f"Received message: {msg.topic} {msg.payload.decode('utf-8')}")
+def main():
+	paho.mqtt.publish.single(
+		topic='[topic]',
+		payload='[message]',
+		qos=2,
+		hostname='[hostname]',
+		port=8883,
+		client_id='[clientid]',
+		auth={
+			'username': '[username]',
+			'password': '[password]'
+		},
+		tls={
+			'ca_certs': '/etc/ssl/certs/DST_Root_CA_X3.pem',
+			'tls_version': ssl.PROTOCOL_TLSv1_2
+		}
+	)
 
-# Add MQTT callback functions to the broker
-mqtt_broker.on_connect = on_connect
-mqtt_broker.on_message = on_message
-
-# Define FastAPI routes
-@app.get("/")
-async def read_root():
-    return {"Hello": "World"}
-
-@app.post("/publish/{topic}")
-async def publish(topic: str, payload: str):
-    mqtt_broker.publish(topic, payload)
-    return {"topic": topic, "payload": payload}
-
-@app.websocket("/subscribe")
-async def subscribe(ws):
-    await ws.accept()
-    while True:
-        msg = mqtt_broker.wait_message()
-        await ws.send_text(f"{msg.topic} {msg.payload.decode('utf-8')}")
+if __name__ == '__main__':
+	main()
+	sys.exit(0)

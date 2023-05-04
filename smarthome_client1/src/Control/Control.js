@@ -53,11 +53,11 @@ function Control() {
                  <br></br>
                  <br></br>
                  <br></br>
-                 <button className="button-cnt1" onClick={() => changeControl()} disabled={!isTrain}>Start Training Mode</button>
+                 <button disabled={!isTrain} className="button-cnt1" onClick={() => changeControl()}>Start Training Mode</button>
                  <br></br>
                  <br></br>
                  <br></br>
-                 <button className="button-cnt2" onClick={() => changeControl()} disabled={isTrain}>Start Automatic mode</button>
+                 <button disabled={isTrain} className="button-cnt2" onClick={() => changeControl()} >Start Automatic mode</button>
               </div>
           )}
         </div>

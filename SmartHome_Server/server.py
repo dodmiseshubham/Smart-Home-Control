@@ -8,11 +8,13 @@ import requests
 from fastapi_utils.tasks import repeat_every
 from training import Classification
 import pickle
+import random
 
 #Import Models
 
 from datetime import datetime
 from datetime import date
+import time
 
 app = FastAPI()
 
@@ -160,8 +162,10 @@ def Automate():
 
 @app.on_event("startup")
 @repeat_every(seconds=10)  # 10 secs
+@app.get("/getacstatus/")
 def ACControl() -> None:
     if data["isAutomate"]:
+        weatherDetails = getCurrentWeather("Fairfax")
         print("Automatic control of AC...")
         filename = 'finalized_model.sav'
         Data = []
@@ -170,17 +174,19 @@ def ACControl() -> None:
         Data.append(weatherDetails["current"]["precip_mm"])
         Data.append(weatherDetails["current"]["temp_f"])
 
-        loaded_model = pickle.load(open(filename, 'rb'))
+        # loaded_model = pickle.load(open(filename, 'rb'))
 
-
-
-        result = loaded_model.predict(Data)
-        weatherDetails = getCurrentWeather("Fairfax")
+        # result = loaded_model.predict(Data)
         # result = loaded_model.score(X_test, Y_test)
-        print(result)
+        # print(result)
+        FanSpeed = random.randint(0,255)
+        return FanSpeed
+        return {"Automated": 1, "FanSpeed": FanSpeed}
         
     else:
         print("Training mode...")
+        return 0
+        return {"Automated": 0, "FanSpeed": 100}
 
 @app.get("/trainmodel")
 async def TrainModel():

@@ -31,4 +31,8 @@ The temperature sensor will be connected to ESP32 or raspberry pi ( will decide 
 • Machine learning: Regression and decision
 tree.
 
+## Actual protoype
+![Prototype](https://github.com/dodmiseshubham/Smart-Home-Control/assets/32294399/9eb996b9-df47-48a0-9c05-32c51880924f)
+
+
 
